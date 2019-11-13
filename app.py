@@ -25,7 +25,7 @@ def index():
 
 		return render_template('index.html', empInfo=empInfo, empRecords=empRecords)
 	else:
-		return "<h1>Failure</h1>"
+		return "<h1>Failure in retrieving data</h1>"
 	
 
 if __name__ == "__main__":
