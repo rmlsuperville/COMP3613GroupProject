@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>R.O.M.A.N Empire</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">R.O.M.A.N Empire</a>
+            </div>
+            <div class="nav navbar-nav" class="nav navbar-nav navbar-right">
+                <ul class="list-inline">
+                    <li class="active"><a class="btn btn-outline-light" href="/">Home</a></li>
+                </ul>
+            </div>
+            <div class="nav navbar-nav navbar-right">
+                <ul class="list-inline" class="nav navbar-nav navbar-right">
+                    <li><a class="btn btn-outline-light" href="/api/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    </header>
+    <div class="blog-header">
+        <div class="container">
+            <h1 class="blog-title" style="text-align:center;">Employee Clock-In Clock-Out System</h1>
+            
+            <br><br>
+
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <th>ID</th> <th>JobID</th> <th>Name</th> <th>Address</th> <th>Sex</th>  <th>Phone No.</th><th>Password</th>
+                </thead>
+
+                <tbody>
+                    {% for emp in empInfo%}
+                    <tr>
+                        <td>{{emp[0]}}</td>
+                        <td>{{emp[1]}}</td>
+                        <td>{{emp[2]}}</td>
+                        <td>{{emp[3]}}</td>
+                        <td>{{emp[4]}}</td>
+                        <td>{{emp[5]}}</td>
+                        <td>{{emp[6]}}</td>
+                    </tr>
+                    {% endfor %}    
+                </tbody>
+            </table>
+
+
+            <br><br>
+
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <th>EmployeeID</th> <th>TimeIn</th> <th>TimeOut</th>
+                </thead>
+
+                <tbody>
+                    {% for rec in empRecords%}
+                    <tr>
+                        <td>{{rec[0]}}</td>
+                        <td>{{rec[1]}}</td>
+                        <td>{{rec[2]}}</td>
+                    </tr>
+                    {% endfor %}    
+                </tbody>
+            </table>      
+        </div>
+    </div>
+    </body>
+</html>
