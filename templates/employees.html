@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block content %}
+    
+     <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <th>ID</th> <th>JobID</th> <th>Name</th> <th>Address</th> <th>Sex</th>  <th>Phone No.</th><th>Password</th>
+                </thead>
+
+                <tbody>
+                    {% for emp in empInfo%}
+                    <tr>
+                        <td>{{emp[0]}}</td>
+                        <td>{{emp[1]}}</td>
+                        <td>{{emp[2]}}</td>
+                        <td>{{emp[3]}}</td>
+                        <td>{{emp[4]}}</td>
+                        <td>{{emp[5]}}</td>
+                        <td>{{emp[6]}}</td>
+                    </tr>
+                    {% endfor %}    
+                </tbody>
+            </table>
+
+            <form method="POST" action="/employee_search">
+                <div class="form-group">
+                    <label for="empId">Search By Employee ID</label>
+                    <input type="number" class="form-control" id="empId" name="empId" aria-describedby="formHelp" placeholder="Enter EmployeeID" required>
+                </div>
+                <input type="submit" value="Search">
+            </form>
+
+
+            <br><br>
+
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <th>EmployeeID</th> <th>TimeIn</th> <th>TimeOut</th>
+                </thead>
+
+                <tbody>
+                    {% for rec in empRecords%}
+                    <tr>
+                        <td>{{rec[0]}}</td>
+                        <td>{{rec[1]}}</td>
+                        <td>{{rec[2]}}</td>
+                    </tr>
+                    {% endfor %}    
+                </tbody>
+            </table>
+
+{% endblock content %}
