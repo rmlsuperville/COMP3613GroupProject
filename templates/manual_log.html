@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1 class="blog-title" style="text-align:center;">Manual Employee Clock-In or Clock-Out</h1>
+
+<br><br>
+
+<section class="jumbotron text-center" style="width: 80%; margin: 0 auto;">
+    <div class="container">
+        <div class="row" >
+            <div class="col-lg">
+                    <h4>Please enter your Employee ID number and indicate whether you are clocking in or clocking out.</h4>
+            </br>
+                <form method="POST" action="/api/validate">
+                    <div class="form-group">
+                      <label for="empId">Employee ID : </label>
+                      <input type="number" name="empId" class="form-control" id="empId" required>
+                    </div>
+					<div class="form-group">
+						<label for="log_type">Time In or Time Out : </label>
+					  	<select class="form-control" id="log_type" name="log_type">
+					  		<option hidden disabled selected value> -- select an option -- </option>
+					    	<option value="in">Time In</option>
+					    	<option value="out">Time Out</option>
+					  	</select>
+					</div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>   
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}

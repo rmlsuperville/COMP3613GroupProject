@@ -46,6 +46,10 @@ def employee_search():
 		return "<h1>Failure in retrieving data</h1>"
 
 
+@app.route('/manual_log')
+def manual_log():
+	return render_template('manual_log.html')
+
 
 if __name__ == "__main__":
     app.run(debug=True)
