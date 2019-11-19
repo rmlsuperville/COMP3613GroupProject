@@ -10,9 +10,18 @@
     <div class="container">
         <div class="row" >
             <div class="col-lg">
-                    <h4>Please enter your Employee ID number and indicate whether you are clocking in or clocking out.</h4>
+                    <h3>Please enter your Employee ID number and indicate whether you are clocking in or clocking out.</h3>
+                    <br>
+                    <h3>
+                        {% if msg == "valid" %}
+                            <span style="color: green">Succesfully Submitted</span>
+                        {% elif msg == "invalid" %}
+                            <span style="color: red">Invalid Employee ID</span>                          
+                        {% endif %}
+                    </h3>
+                    
             </br>
-                <form method="POST" action="/api/validate">
+                <form method="POST" action="/input_log">
                     <div class="form-group">
                       <label for="empId">Employee ID : </label>
                       <input type="number" name="empId" class="form-control" id="empId" required>

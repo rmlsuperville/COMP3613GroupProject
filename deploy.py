@@ -14,6 +14,22 @@ mysql = MySQL(app)
 def index():
 	return render_template('index.html')
 
+@app.route('/login')
+def login():
+	return render_template('login.html')
+
+@app.route('/validate', methods=['POST'])
+def validate():
+	uname = request.form['uname']
+	passw = request.form['passw']
+	cur = mysql.connection.cursor()
+	result = cur.execute("SELECT * FROM EmployeeInfo WHERE ID = {} AND Password = '{}'; ". format(uname, passw))
+	if result > 0:
+		return render_template('login.html', msg="valid",)# log_type=log_type)
+	else:
+		return render_template('login.html', msg="invalid")
+
+
 @app.route('/employees')
 def employees():
 	cur1 = mysql.connection.cursor()
@@ -48,7 +64,20 @@ def employee_search():
 
 @app.route('/manual_log')
 def manual_log():
-	return render_template('manual_log.html')
+	return render_template('manual_log.html', msg="")
+
+
+@app.route('/input_log', methods=['POST'])
+def input_log():
+
+	empID = request.form['empId']
+	log_type = request.form['log_type']
+	cur = mysql.connection.cursor()
+	result = cur.execute("SELECT * FROM EmployeeInfo WHERE ID = {};". format(empID))
+	if result > 0:
+		return render_template('manual_log.html', msg="valid",)# log_type=log_type)
+	else:
+		return render_template('manual_log.html', msg="invalid")
 
 
 if __name__ == "__main__":
