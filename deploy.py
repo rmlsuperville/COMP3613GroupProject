@@ -55,11 +55,41 @@ def employee_search():
 
 	result = cur.execute("SELECT * FROM EmployeeRecords WHERE EmployeeID = {};". format(empID))
 	if result > 0:
-		empRecords = cur.fetchall()
+		empRecord = cur.fetchall()
 
-		return render_template('employee.html', empRecords=empRecords)
+		return render_template('employee.html', empRecord=empRecord)
 	else:
 		return "<h1>Failure in retrieving data</h1>"
+
+@app.route('/executive')
+def executive():
+	return render_template('executive.html')
+
+
+@app.route('/employee_search_exec', methods=['POST'])
+def employee_search_exec():
+	
+	search_type = request.form['search_type']
+	empDetails = request.form['empDetails']
+
+	cur = mysql.connection.cursor()
+
+	if search_type == "empId":
+		empDetails = int(empDetails)
+		result = cur.execute("SELECT ID, JobID, Name, Address, Sex, PhoneNo FROM EmployeeInfo WHERE ID = {};". format(empDetails))
+		if result > 0:
+			empRecord = cur.fetchall()
+			return render_template('executive.html', empRecord=empRecord)
+	if search_type == "empName":
+		result = cur.execute("SELECT ID, JobID, Name, Address, Sex, PhoneNo FROM EmployeeInfo WHERE Name = '{}';". format(empDetails))
+		if result > 0:
+			empRecord = cur.fetchall()
+			return render_template('executive.html', empRecord=empRecord)
+	return render_template('executive.html', msg="No Results Found")
+
+
+#app.route('/emplo')
+
 
 
 @app.route('/manual_log')
