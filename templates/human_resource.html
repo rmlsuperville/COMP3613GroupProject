@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <th>ID</th> <th>JobID</th> <th>Name</th> <th>Address</th> <th>Sex</th>  <th>Phone No.</th><th>Password</th>
+        </thead>
+
+        <tbody>
+            {% for emp in empInfo%}
+            <tr>
+                <td>{{emp[0]}}</td>
+                <td>{{emp[1]}}</td>
+                <td>{{emp[2]}}</td>
+                <td>{{emp[3]}}</td>
+                <td>{{emp[4]}}</td>
+                <td>{{emp[5]}}</td>
+                <td>{{emp[6]}}</td>
+            </tr>
+            {% endfor %}    
+        </tbody>
+    </table>
+
+
+
+{% endblock content %}
