@@ -1,17 +1,29 @@
 {% extends "layout.html" %}
+
+{% block title %}Employee Attendance Management System{% endblock %}
+
+
 {% block content %}
-
-<h1 class="blog-title" style="text-align:center;">Employee Attendance Management System</h1>
-
-<br><br>
 
  <div class="card-deck mb-3 text-center">
    <div class="card-body">
-    <p><a class="btn btn-lg btn-primary" href="/employees" role="button">View Employee Information</a></p>
-    <p><a class="btn btn-lg btn-primary" href="/login" role="button" style="margin-top: 25px;">Log On To the Admin User Interface</a><p>
-    	<p><a class="btn btn-lg btn-primary" href="/executive" role="button" style="margin-top: 25px;">View Executive User Interface</a><p>
-    	<p><a class="btn btn-lg btn-primary" href="/" role="button" style="margin-top: 25px;">View Human Resource User Interface</a><p>
-    <p><a class="btn btn-lg btn-primary" href="/manual_log" role="button" style="margin-top: 25px;">Manual Employee Clock-In or Clock-Out</a></p>
+    	{% if session['name'] %}
+    		<div class="container">
+			  <h1 class="display-3" style="text-align:center;" >Welcome to the Admin User Interface</h1>
+			</div>
+			<br><br>
+	    	<p><a class="btn btn-lg btn-primary" href="/executive" role="button" style="margin-top: 25px;">View Executive User Interface</a><p>
+	    	<p><a class="btn btn-lg btn-primary" href="/" role="button" style="margin-top: 25px;">View Human Resource User Interface</a><p>
+	    {% else %}
+	    	<div class="container">
+			  <h1 class="display-3" style="text-align:center;" >Employee Attendance Management System</h1>
+			</div>
+			<br><br>
+	    	<p><a class="btn btn-lg btn-primary" href="/employees" role="button">View Database Information</a></p>
+    		<p><a class="btn btn-lg btn-primary" href="/login" role="button" style="margin-top: 25px;">Log On To the Admin User Interface</a><p>
+    		<p><a class="btn btn-lg btn-primary" href="/manual_log" role="button" style="margin-top: 25px;">Manual Employee Clock-In or Clock-Out</a></p>
+	    {% endif %}
+    
   </div>
 </div>
 

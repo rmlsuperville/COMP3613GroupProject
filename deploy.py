@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, session
 from flask_mysqldb import MySQL
 
 app = Flask(__name__)
@@ -10,30 +10,33 @@ app.config['MYSQL_DB'] = "SWy5rY8sM1"
 
 mysql = MySQL(app)
 
+app.secret_key = "p2n3ryen2yyp932y32#@kkj3209"
 
 @app.route('/')
 def index():
 	return render_template('index.html')
 
 
-
-@app.route('/login')
+@app.route('/login', methods=["GET","POST"])
 def login():
-	return render_template('login.html')
-
-
-
-@app.route('/validate', methods=['POST'])
-def validate():
-	uname = request.form['uname']
-	passw = request.form['passw']
-	cur = mysql.connection.cursor()
-	result = cur.execute("SELECT * FROM EmployeeInfo WHERE ID = {} AND Password = '{}'; ". format(uname, passw))
-	if result > 0:
-		return render_template('login.html', msg="valid",)# log_type=log_type)
+	if request.method == "POST":
+		uname = request.form['uname']
+		passw = request.form['passw']
+		cur = mysql.connection.cursor()
+		result = cur.execute("SELECT * FROM EmployeeInfo WHERE ID = {} AND Password = '{}'; ". format(uname, passw))
+		if result > 0:
+			session['name'] = uname
+			return render_template('index.html')
+		else:
+			return render_template('login.html', msg="invalid")
 	else:
-		return render_template('login.html', msg="invalid")
+		return render_template('login.html')
 
+
+@app.route('/logout')
+def logout():
+	session.clear()
+	return render_template('index.html')
 
 
 
@@ -51,9 +54,6 @@ def employees():
 		return "<h1>Failure in retrieving data</h1>"
 
 
-
-
-
 @app.route('/employee_search', methods=['POST'])
 def employee_search():
 	empID = request.form['empId']
@@ -66,11 +66,9 @@ def employee_search():
 		return "<h1>Failure in retrieving data</h1>"
 
 
-
 @app.route('/executive')
 def executive():
 	return render_template('executive.html')
-
 
 
 
@@ -91,9 +89,6 @@ def employee_search_exec():
 			empRecord = cur.fetchall()
 			return render_template('executive.html', empRecord=empRecord)
 	return render_template('executive.html', emp_msg="No Results Found")
-
-
-
 
 
 @app.route('/employee_attendance_info/<int:id>')
@@ -124,7 +119,6 @@ def input_log():
 	if result > 0:
 		"""if log_type == "":
 			cur.execute("INSERT INTO EmployeeRecords (id, data) VALUES (%s, %s);", (maxid[0] + 1, insert))			
-
 		cur.execute("INSERT INTO example (id, data) VALUES (%s, %s);", (maxid[0] + 1, insert))
 		mysql.connection.commit()"""
 		return render_template('manual_log.html', msg="valid",)# log_type=log_type)
@@ -132,5 +126,6 @@ def input_log():
 		return render_template('manual_log.html', msg="invalid")
 
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+	app.run(debug=True)
