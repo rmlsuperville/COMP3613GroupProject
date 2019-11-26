@@ -1,4 +1,7 @@
 {% extends "layout.html" %}
+
+{% block title %}Login{% endblock %}
+
 {% block content %}
 
 <section class="jumbotron text-center" style="width: 80%; margin: 0 auto;">
@@ -7,14 +10,12 @@
             <div class="col-lg">
                     <h3>Please enter your username and password credentials</h3>
                     <h3>
-                        {% if msg == "valid" %}
-                            <span style="color: green">Succesfully Logged In</span>
-                        {% elif msg == "invalid" %}
+                        {% if msg %}
                             <span style="color: red">Invalid User Credentials</span>                          
                         {% endif %}
                     </h3>
             </br>
-                <form method="POST" action="/validate">
+                <form method="POST" action="/login">
                     <div class="form-group">
                       <label for="uname">Username : </label>
                       <input type="number" name="uname" class="form-control" id="uname" required>

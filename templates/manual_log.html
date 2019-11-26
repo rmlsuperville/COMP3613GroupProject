@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% block title %}Manual Employee Clock-In or Clock-Out{% endblock %}
+
 {% block content %}
 
 <h1 class="blog-title" style="text-align:center;">Manual Employee Clock-In or Clock-Out</h1>
@@ -13,10 +15,12 @@
                     <h3>Please enter your Employee ID number and indicate whether you are clocking in or clocking out.</h3>
                     <br>
                     <h3>
-                        {% if msg == "valid" %}
+                        {% if msg == "success" %}
                             <span style="color: green">Succesfully Submitted</span>
                         {% elif msg == "invalid" %}
-                            <span style="color: red">Invalid Employee ID</span>                          
+                            <span style="color: red">Invalid Employee ID</span>
+                        {% elif msg == "error" %}
+                            <span style="color: red">Error in inserting data</span>  
                         {% endif %}
                     </h3>
                     
