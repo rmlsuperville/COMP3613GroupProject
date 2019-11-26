@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}Register Employee{% endblock %}
+
+{% block content %}
+
+	<h1 class="display-5" style="text-align:center;" >Register Employee</h1>
+
+	<form method="" >
+        <div class="form-group">
+          <label for="u_email">Email : </label>
+          <input type="email" name="u_email" class="form-control" id="u_email" placeholder="Enter Password" required>
+        </div>
+        <div class="form-group">
+          <label for="passw">Password : </label>
+          <input type="password" name="passw" class="form-control" id="passw" placeholder="Enter Email" required>
+        </div>
+        <div class="form-group">
+          <label for="jobID">Job ID : </label>
+          <input type="number" name="jobID" class="form-control" id="jobID" placeholder="Enter jobID" required>
+        </div>
+        <div class="form-group">
+          <label for="uname">Name : </label>
+          <input type="text" name="uname" class="form-control" id="uname" placeholder="Enter Name" required>
+        </div>
+        <div class="form-group">
+          <label for="address">Address : </label>
+          <input type="text" name="address" class="form-control" id="address" placeholder="Enter Address" required>
+        </div>
+        <div class="form-group">
+          <label for="sex_type">Sex : </label>
+          <select id="sex_type" name="sex_type" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number : </label>
+          <input type="tel" id="phone" name="phone" class="form-control" placeholder="Format: 1234567" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+        <br><br><br>
+    </form>
+{% endblock content %}
+
+
+

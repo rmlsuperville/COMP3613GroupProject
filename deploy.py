@@ -55,6 +55,11 @@ def employees():
 	else:
 		return "<h1>Failure in retrieving data</h1>"
 
+@app.route('/register')
+def register():
+	return render_template('register.html')
+
+
 
 @app.route('/employee_search', methods=['POST'])
 def employee_search():
