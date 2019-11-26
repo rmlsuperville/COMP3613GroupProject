@@ -60,6 +60,32 @@ def register():
 	return render_template('register.html')
 
 
+@app.route('/register_emp', methods=['POST'])
+def register_emp():
+	email=request.form['u_email']
+	password=request.form['passw']
+	jobID=request.form['jobID']
+	name=request.form['uname']
+	address=request.form['address']
+	sex=request.form['sex_type']
+	phone=request.form['phone']
+
+	cur = mysql.connection.cursor()
+
+	try:
+		cur.execute("SELECT ID FROM EmployeeInfo  ORDER BY ID DESC;")
+		empRecords = cur.fetchall()
+		emp_Latest = int(empRecords[0][0])
+		emp_Latest = emp_Latest + 1	
+		cur.execute("INSERT INTO EmployeeInfo VALUES (%s, %s, %s, %s, %s, %s, %s);", (emp_Latest, jobID, name, address, sex, phone, password))
+		mysql.connection.commit()
+		cur.close()
+		return render_template('register.html', type="success", msg="Employee successfully registered")
+	except:
+		mysql.connection.rollback()
+		return render_template('register.html', type="notice", msg="Error in registering data")
+	
+
 
 @app.route('/employee_search', methods=['POST'])
 def employee_search():
