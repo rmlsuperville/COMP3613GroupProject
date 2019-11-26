@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, session
 from flask_mysqldb import MySQL
 from datetime import datetime
+import pytz
 
 app = Flask(__name__)
 
@@ -120,7 +121,8 @@ def input_log():
 	if result > 0:
 		if log_type == "in":
 			try:
-				timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+				dt_utcnow = datetime.now(tz=pytz.UTC)
+				timestamp = dt_utcnow.astimezone(pytz.timezone('Canada/Atlantic')).strftime('%Y-%m-%d %H:%M:%S')
 				cur.execute("INSERT INTO EmployeeStatus (EmployeeID, TimeIn) VALUES (%s, %s);", (empID, timestamp))
 				mysql.connection.commit()
 				cur.close()
