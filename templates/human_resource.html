@@ -1,6 +1,24 @@
 {% extends "layout.html" %}
 {% block content %}
+    <style>
+        .mail{
+            display: block;
+            width: 100%;
+            background-color: black;
+            color: lightblue;
+            padding : 12px 24px;
+            font-size: 18px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+        }
 
+        .mail:hover{
+            background-color: lightseagreen;
+            color: black;
+        }
+    </style>
+    <form action="mailto:hr@company.com" method="post">
     <table class="table table-striped table-hover">
         <thead class="thead-dark">
             <th>ID</th> <th>JobID</th> <th>Name</th> <th>Address</th> <th>Sex</th>  <th>Phone No.</th><th>Password</th>
@@ -21,6 +39,8 @@
         </tbody>
     </table>
 
+    <input type="submit" value="Send" class="mail">
+    </form>
 
 
 {% endblock content %}
