@@ -18,6 +18,29 @@
         <input type="submit" value="Search">
     </form>
 
+    {% if empRecords is defined %}
+        <h1 class="display-5" style="text-align:center;" >Employee Listing</h1>
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <th>ID</th> <th>JobID</th> <th>Name</th> <th>Address</th> <th>Sex</th>  <th>Phone No.</th><th>Password</th>
+            </thead>
+
+            <tbody>
+                {% for emp in empRecords%}
+                <tr>
+                    <td>{{emp[0]}}</td>
+                    <td>{{emp[1]}}</td>
+                    <td>{{emp[2]}}</td>
+                    <td>{{emp[3]}}</td>
+                    <td>{{emp[4]}}</td>
+                    <td>{{emp[5]}}</td>
+                    <td>{{emp[6]}}</td>
+                </tr>
+                {% endfor %}    
+            </tbody>
+        </table>
+    {% endif %}
+
     {% if emp_msg is defined %}
         <h4 style="color: red;">{{emp_msg}}</h4>
     {% endif %}

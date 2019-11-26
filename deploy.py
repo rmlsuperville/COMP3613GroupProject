@@ -70,7 +70,13 @@ def employee_search():
 
 @app.route('/executive')
 def executive():
-	return render_template('executive.html')
+	cur = mysql.connection.cursor()
+	resultValue = cur.execute("SELECT * FROM EmployeeInfo")
+	if resultValue > 0:
+		empRecords = cur.fetchall()
+		return render_template('executive.html', empRecords=empRecords)
+	else:
+		return render_template('executive.html')
 
 
 
