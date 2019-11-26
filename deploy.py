@@ -120,18 +120,38 @@ def input_log():
 	result = cur.execute("SELECT * FROM EmployeeInfo WHERE ID = {};". format(empID))
 	if result > 0:
 		if log_type == "in":
-			try:
-				dt_utcnow = datetime.now(tz=pytz.UTC)
-				timestamp = dt_utcnow.astimezone(pytz.timezone('Canada/Atlantic')).strftime('%Y-%m-%d %H:%M:%S')
-				cur.execute("INSERT INTO EmployeeStatus (EmployeeID, TimeIn) VALUES (%s, %s);", (empID, timestamp))
-				mysql.connection.commit()
-				cur.close()
-				return render_template('manual_log.html', msg="success")
-			except:
-				mysql.connection.rollback()
-				return render_template('manual_log.html', msg="error")
+			result = cur.execute("SELECT EmployeeID FROM EmployeeStatus WHERE EmployeeID = {};". format(empID))
+			if result > 0:
+				return render_template('manual_log.html', type="notice", msg="You have already clocked-in")
+			else:
+				try:
+					dt_utcnow = datetime.now(tz=pytz.UTC)
+					timestamp = dt_utcnow.astimezone(pytz.timezone('Canada/Atlantic')).strftime('%Y-%m-%d %H:%M:%S')
+					cur.execute("INSERT INTO EmployeeStatus (EmployeeID, TimeIn) VALUES (%s, %s);", (empID, timestamp))
+					mysql.connection.commit()
+					cur.close()
+					return render_template('manual_log.html', type="success", msg="Successfully submitted")
+				except:
+					mysql.connection.rollback()
+					return render_template('manual_log.html', type="notice", msg="Error in inserting data")
+		if log_type == "out":
+			if cur.execute("SELECT EmployeeID FROM EmployeeStatus WHERE EmployeeID = {};". format(empID)) > 0:
+				empRecord = cur.fetchone()
+				empID = empRecord[0]
+				try:
+					dt_utcnow = datetime.now(tz=pytz.UTC)
+					timestamp = dt_utcnow.astimezone(pytz.timezone('Canada/Atlantic')).strftime('%Y-%m-%d %H:%M:%S')
+					cur.execute("UPDATE EmployeeStatus SET timeOut = %s WHERE EmployeeID = %s;", (timestamp, empID))
+					mysql.connection.commit()
+					cur.close()
+					return render_template('manual_log.html', type="success", msg="Successfully submitted")
+				except:
+					mysql.connection.rollback()
+					return render_template('manual_log.html', type="notice", msg="Error in updating data")
+			else:
+				return render_template('manual_log.html', type="notice", msg="You have not clocked-in for the day")
 	else:
-		return render_template('manual_log.html', msg="invalid")
+		return render_template('manual_log.html', type="notice", msg="Invalid Employee Credentials!")
 
 
 

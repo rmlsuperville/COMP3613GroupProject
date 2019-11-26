@@ -15,12 +15,10 @@
                     <h3>Please enter your Employee ID number and indicate whether you are clocking in or clocking out.</h3>
                     <br>
                     <h3>
-                        {% if msg == "success" %}
-                            <span style="color: green">Succesfully Submitted</span>
-                        {% elif msg == "invalid" %}
-                            <span style="color: red">Invalid Employee ID</span>
-                        {% elif msg == "error" %}
-                            <span style="color: red">Error in inserting data</span>  
+                        {% if type == "success" %}
+                            <span style="color: green">{{msg}}</span>
+                        {% elif type == "notice" %}
+                            <span style="color: red">{{msg}}</span>  
                         {% endif %}
                     </h3>
                     
