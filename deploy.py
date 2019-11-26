@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, session
 from flask_mysqldb import MySQL
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -117,11 +118,16 @@ def input_log():
 	cur = mysql.connection.cursor()
 	result = cur.execute("SELECT * FROM EmployeeInfo WHERE ID = {};". format(empID))
 	if result > 0:
-		"""if log_type == "":
-			cur.execute("INSERT INTO EmployeeRecords (id, data) VALUES (%s, %s);", (maxid[0] + 1, insert))			
-		cur.execute("INSERT INTO example (id, data) VALUES (%s, %s);", (maxid[0] + 1, insert))
-		mysql.connection.commit()"""
-		return render_template('manual_log.html', msg="valid",)# log_type=log_type)
+		if log_type == "in":
+			try:
+				timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+				cur.execute("INSERT INTO EmployeeStatus (EmployeeID, TimeIn) VALUES (%s, %s);", (empID, timestamp))
+				mysql.connection.commit()
+				cur.close()
+				return render_template('manual_log.html', msg="success")
+			except:
+				mysql.connection.rollback()
+				return render_template('manual_log.html', msg="error")
 	else:
 		return render_template('manual_log.html', msg="invalid")
 
