@@ -134,14 +134,14 @@ def employee_search_exec():
 def employee_attendance_info(id):
 	cur1 = mysql.connection.cursor()
 	cur2 = mysql.connection.cursor()
-	result1 = cur1.execute("SELECT ID, JobID, Name, Address, Sex, PhoneNo FROM EmployeeInfo WHERE ID = {};". format(id))
-	empRecord = cur1.fetchall()
+	cur1.execute("SELECT ID, JobID, Name, Address, Sex, PhoneNo FROM EmployeeInfo WHERE ID = {};". format(id))
+	empInfo = cur1.fetchall()
 	result2 = cur2.execute("SELECT * FROM EmployeeRecords WHERE EmployeeID = {};". format(id))
 	if result2 > 0:
 			empAttendance = cur2.fetchall()
-			return render_template('executive.html', empRecord = empRecord, empAttendance=empAttendance)
+			return render_template('executive.html', empInfo = empInfo, empAttendance=empAttendance)
 	else:
-		return render_template('executive.html', empRecord=empRecord , att_msg="No Attendance Results Found")
+		return render_template('executive.html', empInfo = empInfo, att_msg="No Attendance Results Found")
 
 
 @app.route('/manual_log')

@@ -17,16 +17,19 @@
         </div>
         <input type="submit" value="Search">
     </form>
+    <br>
+    <a href="/executive"><button style="margin: 0 auto;" type="button" class="btn btn-info btn-lg">View All Employees</button></a>
 
     {% if empRecords is defined %}
         <h1 class="display-5" style="text-align:center;" >Employee Listing</h1>
         <table class="table table-striped table-hover">
             <thead class="thead-dark">
-                <th>ID</th> <th>JobID</th> <th>Name</th> <th>Address</th> <th>Sex</th>  <th>Phone No.</th><th>Password</th>
+                <th>ID</th> <th>JobID</th> <th>Name</th> <th>Address</th> <th>Sex</th>  <th>Phone No.</th><th>Password</th><th>Options</th>
             </thead>
 
             <tbody>
                 {% for emp in empRecords%}
+                {% set empId = emp[0] %}
                 <tr>
                     <td>{{emp[0]}}</td>
                     <td>{{emp[1]}}</td>
@@ -35,6 +38,7 @@
                     <td>{{emp[4]}}</td>
                     <td>{{emp[5]}}</td>
                     <td>{{emp[6]}}</td>
+                    <td><a href="/employee_attendance_info/{{empId}}"><span class="glyphicon glyphicon-search"></span> View Attendance Info</a></td>
                 </tr>
                 {% endfor %}    
             </tbody>
@@ -45,14 +49,13 @@
         <h4 style="color: red;">{{emp_msg}}</h4>
     {% endif %}
 
-
     <br><br>
 
     {% if empRecord is defined %}
         {% set empId = empRecord[0][0] %}
         <table class="table table-striped table-hover">
                 <thead class="thead-dark">
-                    <th>Employee ID</th> <th>JobID</th> <th>Employee Name</th> <th>Address</th> <th>Sex</th>  <th>Phone No.</th>
+                    <th>Employee ID</th> <th>JobID</th> <th>Employee Name</th> <th>Address</th> <th>Sex</th>  <th>Phone No.</th> <th>Options</th>
                 </thead>
                 <tbody>
                     {% for emp in empRecord%}
@@ -64,69 +67,83 @@
                         <td>{{emp[3]}}</td>
                         <td>{{emp[4]}}</td>
                         <td>{{emp[5]}}</td>
+                        <td><a href="/employee_attendance_info/{{empId}}"><span class="glyphicon glyphicon-search"></span> View Attendance Info</a></td>
                     </tr>
                     {% endfor %}    
                 </tbody>
         </table>
-
         <br>
+    {% endif %}
 
-        <a href="/employee_attendance_info/{{empId}}"><button style="margin: 0 auto;" type="button" class="btn btn-info btn-lg">View Attendance Information</button></a>
+    {% if empInfo is defined %}
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <th>Employee ID</th> <th>JobID</th> <th>Employee Name</th> <th>Address</th> <th>Sex</th>  <th>Phone No.</th>
+        </thead>
+        <tbody>
+            {% for emp in empInfo%}
+            <tr>
+                <td>{{emp[0]}}</td>
+                <td>{{emp[1]}}</td>
+                <td>{{emp[2]}}</td>
+                <td>{{emp[3]}}</td>
+                <td>{{emp[4]}}</td>
+                <td>{{emp[5]}}</td>
+            </tr>
+            {% endfor %}    
+        </tbody>
+    </table>
+    <br>
+    {% endif %}
 
-        <br><br>
+    {% if att_msg is defined %}
+        <h4 style="color: red;">{{att_msg}}</h4>
+    {% endif %}
 
-        {% if att_msg is defined %}
-            <h4 style="color: red;">{{msg}}</h4>
-        {% endif %}
+    {% if empAttendance is defined %}
+        <label for="searchInput">You can filter records by timestamp</label>
+        <input type="text" class="form-control" name="searchInput" id="searchInput" onkeyup="myFunction()" placeholder="Enter timestamp">
+        <br>
+        <table class="table table-striped table-hover" id="timeRecords">
+            <thead class="thead-dark">
+                <th>Employee ID</th> <th>Time In (YYYY-MM-DD)</th> <th>Time Out (YYYY-MM-DD)</th> <th>Hours Worked</th>
+            </thead>
+            <tbody>
+                {% for rec in empAttendance %}
+                <tr>
 
-        {% if empAttendance is defined %}
-            <label for="searchInput">You can filter records by timestamp</label>
-            <input type="text" class="form-control" name="searchInput" id="searchInput" onkeyup="myFunction()" placeholder="Enter timestamp">
-            <br>
-            <table class="table table-striped table-hover" id="timeRecords">
-                <thead class="thead-dark">
-                    <th>Employee ID</th> <th>Time In (YYYY-MM-DD)</th> <th>Time Out (YYYY-MM-DD)</th> <th>Hours Worked</th>
-                </thead>
-                <tbody>
-                    {% for rec in empAttendance %}
-                    <tr>
+                    <td>{{rec[0]}}</td>
+                    <td>{{rec[1]}}</td>
+                    <td>{{rec[2]}}</td>
+                    <td>{{rec[3]}}</td>
+                </tr>
+                {% endfor %}    
+            </tbody>
+    </table>
 
-                        <td>{{rec[0]}}</td>
-                        <td>{{rec[1]}}</td>
-                        <td>{{rec[2]}}</td>
-                        <td>{{rec[3]}}</td>
-                    </tr>
-                    {% endfor %}    
-                </tbody>
-        </table>
+    <script>
+    function myFunction() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("timeRecords");
+            tr = table.getElementsByTagName("tr");
 
-        <script>
-        function myFunction() {
-              // Declare variables
-              var input, filter, table, tr, td, i, txtValue;
-              input = document.getElementById("searchInput");
-              filter = input.value.toUpperCase();
-              table = document.getElementById("timeRecords");
-              tr = table.getElementsByTagName("tr");
-
-              // Loop through all table rows, and hide those who don't match the search query
-              for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                  txtValue = td.textContent || td.innerText;
-                  if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                  } else {
-                    tr[i].style.display = "none";
-                  }
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+                } else {
+                tr[i].style.display = "none";
                 }
-              }
             }
-            </script>
-        {% endif %}
-
-
-
+            }
+        }
+        </script>
     {% endif %}
 
 
