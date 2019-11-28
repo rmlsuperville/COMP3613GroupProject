@@ -25,9 +25,15 @@ def login():
 		uname = request.form['uname']
 		passw = request.form['passw']
 		cur = mysql.connection.cursor()
-		result = cur.execute("SELECT * FROM EmployeeInfo WHERE ID = {} AND Password = '{}'; ". format(uname, passw))
+		result = cur.execute("SELECT j.Executive, j.JobID FROM EmployeeInfo e, Jobs j, Department d WHERE e.ID = {} AND e.Password = '{}' AND e.JobID=j.JobID AND (j.Executive = 1 OR j.JobID = 42 OR j.JobID = 43)". format(uname, passw))
 		if result > 0:
-			session['name'] = uname
+			empRecord = cur.fetchone()
+			if empRecord[0] == 1:
+				session['name'] = uname
+				session['type'] = "Executive"
+			else:
+				session['name'] = uname
+				session['type'] = "Human Resource"
 			return render_template('index.html')
 		else:
 			return render_template('login.html', msg="invalid")
@@ -102,7 +108,7 @@ def employee_search():
 @app.route('/executive')
 def executive():
 	cur = mysql.connection.cursor()
-	resultValue = cur.execute("SELECT * FROM EmployeeInfo")
+	resultValue = cur.execute("SELECT e.ID, e.Name, j.JobDesc, e.PhoneNo FROM EmployeeInfo e, Jobs j WHERE e.JobID=j.JobID;")
 	if resultValue > 0:
 		empRecords = cur.fetchall()
 		return render_template('executive.html', empRecords=empRecords)
@@ -118,12 +124,12 @@ def employee_search_exec():
 	cur = mysql.connection.cursor()
 	if search_type == "empId":
 		empDetails = int(empDetails)
-		result = cur.execute("SELECT ID, JobID, Name, Address, Sex, PhoneNo FROM EmployeeInfo WHERE ID = {};". format(empDetails))
+		result = cur.execute("SELECT e.ID, e.Name, j.JobDesc, e.PhoneNo FROM EmployeeInfo e, Jobs j WHERE e.JobID=j.JobID AND e.ID = {};".format(empDetails))
 		if result > 0:
 			empRecord = cur.fetchall()
 			return render_template('executive.html', empRecord=empRecord)
 	if search_type == "empName":
-		result = cur.execute("SELECT ID, JobID, Name, Address, Sex, PhoneNo FROM EmployeeInfo WHERE Name = '{}';". format(empDetails))
+		result = cur.execute("SELECT e.ID, e.Name, j.JobDesc, e.PhoneNo FROM EmployeeInfo e, Jobs j WHERE e.JobID=j.JobID AND e.Name = '{}';".format(empDetails))
 		if result > 0:
 			empRecord = cur.fetchall()
 			return render_template('executive.html', empRecord=empRecord)
@@ -134,8 +140,8 @@ def employee_search_exec():
 def employee_attendance_info(id):
 	cur1 = mysql.connection.cursor()
 	cur2 = mysql.connection.cursor()
-	cur1.execute("SELECT ID, JobID, Name, Address, Sex, PhoneNo FROM EmployeeInfo WHERE ID = {};". format(id))
-	empInfo = cur1.fetchall()
+	cur1.execute("SELECT e.ID, e.Name, j.JobDesc, e.PhoneNo FROM EmployeeInfo e, Jobs j WHERE e.JobID=j.JobID AND e.ID = '{}';".format(id))
+	empInfo = cur1.fetchone()
 	result2 = cur2.execute("SELECT * FROM EmployeeRecords WHERE EmployeeID = {};". format(id))
 	if result2 > 0:
 			empAttendance = cur2.fetchall()
@@ -143,6 +149,34 @@ def employee_attendance_info(id):
 	else:
 		return render_template('executive.html', empInfo = empInfo, att_msg="No Attendance Results Found")
 
+
+@app.route('/human_resource')
+def human_resource():
+	cur = mysql.connection.cursor()
+	cur1 = mysql.connection.cursor()
+	result1 = cur.execute("SELECT e.ID, e.Name, j.JobName, j.JobDesc, d.DepartmentName FROM EmployeeInfo e, Jobs j, Department d WHERE e.JobID=j.JobID AND j.JobType=d.DepartmentID ORDER BY d.DepartmentName;")
+	result2 = cur1.execute("SELECT DepartmentName FROM Department;")
+	if result1 > 0 and result2 > 0:
+		empRecords = cur.fetchall()
+		deptTypes = cur1.fetchall()
+		return render_template('human_resource.html', deptTypes=deptTypes, empRecords=empRecords)	
+	else:
+		return render_template('human_resource.html', err_msg="Error in retrieving data!")
+
+@app.route('/employee_search_hr', methods=['POST'])
+def employee_search_hr():
+	dept = request.form['department']
+	cur = mysql.connection.cursor()
+	cur1 = mysql.connection.cursor()
+	result1 = cur.execute("SELECT e.ID, e.Name, j.JobName, j.JobDesc, d.DepartmentName FROM EmployeeInfo e, Jobs j, Department d WHERE e.JobID=j.JobID AND j.JobType=d.DepartmentID AND d.DepartmentName = '{}';".format(dept))
+	result2 = cur1.execute("SELECT DepartmentName FROM Department;")
+	if result1 > 0 and result2 > 0:
+		empRecords = cur.fetchall()
+		deptTypes = cur1.fetchall()
+		return render_template('human_resource.html', deptTypes=deptTypes, empRecords=empRecords)	
+	else:
+		return render_template('human_resource.html', err_msg="Error in retrieving data!")
+	return "<h1> {} </h1>".format(dept)
 
 @app.route('/manual_log')
 def manual_log():
