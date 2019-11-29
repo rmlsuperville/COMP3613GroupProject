@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL
 from datetime import datetime
 import pytz
 import pdfkit
+import os.path
 
 
 app = Flask(__name__)
@@ -17,6 +18,8 @@ mysql = MySQL(app)
 app.secret_key = "p2n3ryen2yyp932y32#@kkj3209"
 
 #config = pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+
+config = pdfkit.configuration(wkhtmltopdf="wkhtmltopdf.exe")
 
 @app.route('/')
 def index():
@@ -150,8 +153,8 @@ def employee_attendance_info(id):
 		empAttendance = cur2.fetchall()
 		if request.method == "POST":
 			rendered = render_template('executive_report.html', empInfo = empInfo, empAttendance=empAttendance, empId=id)
-			pdf = pdfkit.from_string(rendered, False)
-			#pdf = pdfkit.from_string(rendered, False, configuration=config)
+			#pdf = pdfkit.from_string(rendered, False)
+			pdf = pdfkit.from_string(rendered, False, configuration=config)
 			response = make_response(pdf)
 			response.headers['Content-Type'] = 'application/pdf'
 			response.headers['Content-Disposition'] = 'inline; filename=executive_report.pdf'
@@ -198,8 +201,8 @@ def human_resource():
 				empTotalHoursList.append(empTotalHours[0])
 				empSalaryList.append(hourlyRate* float(empTotalHours[0]))
 			rendered = render_template('hr_report.html', empRecords=empRecords, empTotalHoursList=empTotalHoursList, empSalaryList=empSalaryList)
-			pdf = pdfkit.from_string(rendered, False)
-			#pdf = pdfkit.from_string(rendered, False, configuration=config)
+			#pdf = pdfkit.from_string(rendered, False)
+			pdf = pdfkit.from_string(rendered, False, configuration=config)
 			response = make_response(pdf)
 			response.headers['Content-Type'] = 'application/pdf'
 			response.headers['Content-Disposition'] = 'inline; filename=hr_report.pdf'
@@ -254,8 +257,8 @@ def employee_search_hr_report(dept):
 		
 		rendered = render_template('hr_report.html', empRecords=empRecords, empTotalHoursList=empTotalHoursList, empSalaryList=empSalaryList)
 		#return rendered
-		pdf = pdfkit.from_string(rendered, False)
-		#pdf = pdfkit.from_string(rendered, False, configuration=config)
+		#pdf = pdfkit.from_string(rendered, False)
+		pdf = pdfkit.from_string(rendered, False, configuration=config)
 		response = make_response(pdf)
 		response.headers['Content-Type'] = 'application/pdf'
 		response.headers['Content-Disposition'] = 'inline; filename=hr_report.pdf'
