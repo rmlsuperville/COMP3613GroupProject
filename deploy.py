@@ -5,7 +5,6 @@ import pytz
 import pdfkit
 import os.path
 
-
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = "remotemysql.com"
@@ -19,7 +18,9 @@ app.secret_key = "p2n3ryen2yyp932y32#@kkj3209"
 
 #config = pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
-config = pdfkit.configuration(wkhtmltopdf="\wkhtmltopdf.exe")
+path = r'\\wkhtmltopdf.exe'
+dirname = os.path.dirname(path) 
+config = pdfkit.configuration(wkhtmltopdf=dirname)
 
 @app.route('/')
 def index():
