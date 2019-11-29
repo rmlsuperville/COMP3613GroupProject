@@ -17,6 +17,9 @@
             background-color: lightseagreen;
             color: black;
         }
+        th, tr{
+            text-align: center;
+        }
     </style>
     
     {% if empRecords is defined %}
@@ -28,15 +31,16 @@
                         {% for emp in deptTypes%}
                             <option value="{{emp[0]}}">{{emp[0]}}</option>
                         {% endfor %}
+                            <option value="all">View All</option>
                     </select>
                     <input type="submit" value="Search">
                 </div>
             </form>    
         {% endif %}
-        
+    
         <table class="table table-striped table-hover">
             <thead class="thead-dark">
-                <th>ID</th> <th>Name</th> <th>Job Name</th> <th>Job Description</th> <th>Department</th>
+                <th>ID</th> <th>Name</th> <th>Job Name</th> <th>Department</th> <th>Hourly Rate</th> <th>Total Hours Worked</th> <th>Salary</th>
             </thead>
 
             <tbody>
@@ -46,8 +50,10 @@
                     <td>{{emp[1]}}</td>
                     <td>{{emp[2]}}</td>
                     <td>{{emp[3]}}</td>
-                    <td>{{emp[4]}}</td>
-                    <td>{{emp[5]}}</td>
+                    <td>{{'$' ~ emp[4]}}</td>
+                    {% set count = loop.index-1 %}
+                    <td>{{empTotalHoursList[count]}}</td>
+                    <td>{{'$' ~ empSalaryList[count]}}</td>
                 </tr>
                 {% endfor %}    
             </tbody>
@@ -58,9 +64,19 @@
         <h4 style="color: red;">{{err_msg}}</h4>
     {% endif %}
 
+    {% if dept is defined %}
+        <form action="/employee_search_hr/{{dept}}">
+            <input type="submit" value="Generate PDF File" class="mail">
+        </form>
+    {% else %}
+        <form action="/human_resource" method="POST">
+            <input type="submit" value="Generate PDF File" class="mail">
+        </form>
+    {% endif %}
+    
+    <br>
     <form action="mailto:executive@company.com" method="post">
         <input type="submit" value="Create New Email" class="mail">
     </form>
-
 
 {% endblock content %}

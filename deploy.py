@@ -1,7 +1,9 @@
-from flask import Flask, request, render_template, session
+from flask import Flask, request, render_template, session, redirect, url_for, make_response
 from flask_mysqldb import MySQL
 from datetime import datetime
 import pytz
+import pdfkit
+
 
 app = Flask(__name__)
 
@@ -13,6 +15,8 @@ app.config['MYSQL_DB'] = "SWy5rY8sM1"
 mysql = MySQL(app)
 
 app.secret_key = "p2n3ryen2yyp932y32#@kkj3209"
+
+#config = pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
 @app.route('/')
 def index():
@@ -116,7 +120,6 @@ def executive():
 		return render_template('executive.html')
 
 
-
 @app.route('/employee_search_exec', methods=['POST'])
 def employee_search_exec():
 	search_type = request.form['search_type']
@@ -136,7 +139,7 @@ def employee_search_exec():
 	return render_template('executive.html', emp_msg="No Results Found")
 
 
-@app.route('/employee_attendance_info/<int:id>')
+@app.route('/employee_attendance_info/<int:id>', methods=['GET','POST'])
 def employee_attendance_info(id):
 	cur1 = mysql.connection.cursor()
 	cur2 = mysql.connection.cursor()
@@ -144,39 +147,121 @@ def employee_attendance_info(id):
 	empInfo = cur1.fetchone()
 	result2 = cur2.execute("SELECT * FROM EmployeeRecords WHERE EmployeeID = {};". format(id))
 	if result2 > 0:
-			empAttendance = cur2.fetchall()
-			return render_template('executive.html', empInfo = empInfo, empAttendance=empAttendance)
+		empAttendance = cur2.fetchall()
+		if request.method == "POST":
+			rendered = render_template('executive_report.html', empInfo = empInfo, empAttendance=empAttendance, empId=id)
+			pdf = pdfkit.from_string(rendered, False)
+			#pdf = pdfkit.from_string(rendered, False, configuration=config)
+			response = make_response(pdf)
+			response.headers['Content-Type'] = 'application/pdf'
+			response.headers['Content-Disposition'] = 'inline; filename=executive_report.pdf'
+			return response
+		else:		
+			return render_template('executive.html', empInfo = empInfo, empAttendance=empAttendance, empId=id)
 	else:
 		return render_template('executive.html', empInfo = empInfo, att_msg="No Attendance Results Found")
 
 
-@app.route('/human_resource')
+
+@app.route('/human_resource', methods=['POST','GET'])
 def human_resource():
 	cur = mysql.connection.cursor()
-	cur1 = mysql.connection.cursor()
-	result1 = cur.execute("SELECT e.ID, e.Name, j.JobName, j.JobDesc, d.DepartmentName FROM EmployeeInfo e, Jobs j, Department d WHERE e.JobID=j.JobID AND j.JobType=d.DepartmentID ORDER BY d.DepartmentName;")
-	result2 = cur1.execute("SELECT DepartmentName FROM Department;")
-	if result1 > 0 and result2 > 0:
-		empRecords = cur.fetchall()
-		deptTypes = cur1.fetchall()
-		return render_template('human_resource.html', deptTypes=deptTypes, empRecords=empRecords)	
+	result1 = cur.execute("SELECT e.ID, e.Name, j.JobName, d.DepartmentName , j.HourlyRate FROM EmployeeInfo e, Jobs j, Department d WHERE e.JobID=j.JobID AND j.JobType=d.DepartmentID ORDER BY d.DepartmentName;")
+	if request.method == "GET":
+		cur1 = mysql.connection.cursor()
+		result2 = cur1.execute("SELECT DepartmentName FROM Department;")
+		if result1 > 0 and result2 > 0:
+			empRecords = cur.fetchall()
+			empTotalHoursList = []
+			empSalaryList = []
+			for i in range(0,len(empRecords)):
+				id = empRecords[i][0]
+				hourlyRate = empRecords[i][4]
+				cur.execute("SELECT SUM(HRS) FROM EmployeeRecords WHERE EmployeeID = {};".format(id))
+				empTotalHours = cur.fetchone()
+				empTotalHoursList.append(empTotalHours[0])
+				empSalaryList.append(hourlyRate* float(empTotalHours[0]))
+			deptTypes = cur1.fetchall()
+			return render_template('human_resource.html', deptTypes=deptTypes, empRecords=empRecords, empTotalHoursList=empTotalHoursList, empSalaryList=empSalaryList)	
+		else:
+			return render_template('human_resource.html', err_msg="Error in retrieving data!")
 	else:
-		return render_template('human_resource.html', err_msg="Error in retrieving data!")
+		if result1 > 0:
+			empRecords = cur.fetchall()
+			empTotalHoursList = []
+			empSalaryList = []
+			for i in range(0,len(empRecords)):
+				id = empRecords[i][0]
+				hourlyRate = empRecords[i][4]
+				cur.execute("SELECT SUM(HRS) FROM EmployeeRecords WHERE EmployeeID = {};".format(id))
+				empTotalHours = cur.fetchone()
+				empTotalHoursList.append(empTotalHours[0])
+				empSalaryList.append(hourlyRate* float(empTotalHours[0]))
+			rendered = render_template('hr_report.html', empRecords=empRecords, empTotalHoursList=empTotalHoursList, empSalaryList=empSalaryList)
+			pdf = pdfkit.from_string(rendered, False)
+			#pdf = pdfkit.from_string(rendered, False, configuration=config)
+			response = make_response(pdf)
+			response.headers['Content-Type'] = 'application/pdf'
+			response.headers['Content-Disposition'] = 'inline; filename=hr_report.pdf'
+			return response
+		else:
+			return render_template('human_resource.html', err_msg="Error in creating PDF File")
+	
+
 
 @app.route('/employee_search_hr', methods=['POST'])
 def employee_search_hr():
 	dept = request.form['department']
+	if dept == "all":
+		return redirect(url_for('human_resource'))
+	else:	
+		cur = mysql.connection.cursor()
+		result1 = cur.execute("SELECT e.ID, e.Name, j.JobName, d.DepartmentName, j.HourlyRate FROM EmployeeInfo e, Jobs j, Department d WHERE e.JobID=j.JobID AND j.JobType=d.DepartmentID AND d.DepartmentName = '{}';".format(dept))
+		cur1 = mysql.connection.cursor()
+		result2 = cur1.execute("SELECT DepartmentName FROM Department;")
+		if result1 > 0 and result2 > 0:
+			empRecords = cur.fetchall()
+			empTotalHoursList = []
+			empSalaryList = []
+			for i in range(0,len(empRecords)):
+				id = empRecords[i][0]
+				hourlyRate = empRecords[i][4]
+				cur.execute("SELECT SUM(HRS) FROM EmployeeRecords WHERE EmployeeID = {};".format(id))
+				empTotalHours = cur.fetchone()
+				empTotalHoursList.append(empTotalHours[0])
+				empSalaryList.append(hourlyRate* float(empTotalHours[0]))
+			deptTypes = cur1.fetchall()
+			return render_template('human_resource.html', deptTypes=deptTypes, empRecords=empRecords, empTotalHoursList=empTotalHoursList, empSalaryList=empSalaryList, dept=dept)	
+		else:
+			return render_template('human_resource.html', err_msg="Error in retrieving data!")
+
+
+@app.route('/employee_search_hr/<dept>')
+def employee_search_hr_report(dept):	
 	cur = mysql.connection.cursor()
-	cur1 = mysql.connection.cursor()
-	result1 = cur.execute("SELECT e.ID, e.Name, j.JobName, j.JobDesc, d.DepartmentName FROM EmployeeInfo e, Jobs j, Department d WHERE e.JobID=j.JobID AND j.JobType=d.DepartmentID AND d.DepartmentName = '{}';".format(dept))
-	result2 = cur1.execute("SELECT DepartmentName FROM Department;")
-	if result1 > 0 and result2 > 0:
+	result1 = cur.execute("SELECT e.ID, e.Name, j.JobName, d.DepartmentName, j.HourlyRate FROM EmployeeInfo e, Jobs j, Department d WHERE e.JobID=j.JobID AND j.JobType=d.DepartmentID AND d.DepartmentName = '{}';".format(dept))
+	if result1 > 0:
 		empRecords = cur.fetchall()
-		deptTypes = cur1.fetchall()
-		return render_template('human_resource.html', deptTypes=deptTypes, empRecords=empRecords)	
+		empTotalHoursList = []
+		empSalaryList = []
+		for i in range(0,len(empRecords)):
+			id = empRecords[i][0]
+			hourlyRate = empRecords[i][4]
+			cur.execute("SELECT SUM(HRS) FROM EmployeeRecords WHERE EmployeeID = {};".format(id))
+			empTotalHours = cur.fetchone()
+			empTotalHoursList.append(empTotalHours[0])
+			empSalaryList.append(hourlyRate* float(empTotalHours[0]))
+		
+		rendered = render_template('hr_report.html', empRecords=empRecords, empTotalHoursList=empTotalHoursList, empSalaryList=empSalaryList)
+		pdf = pdfkit.from_string(rendered, False)
+		#pdf = pdfkit.from_string(rendered, False, configuration=config)
+		response = make_response(pdf)
+		response.headers['Content-Type'] = 'application/pdf'
+		response.headers['Content-Disposition'] = 'inline; filename=hr_report.pdf'
+		return response
 	else:
-		return render_template('human_resource.html', err_msg="Error in retrieving data!")
-	return "<h1> {} </h1>".format(dept)
+		return render_template('human_resource.html', err_msg="Error in creating PDF File")
+
 
 @app.route('/manual_log')
 def manual_log():

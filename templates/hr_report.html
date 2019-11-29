@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Human Resource Salary Report</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">    
+        <style>
+            th, tr{
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        
+        <h1 class="display-3" style="text-align:center;" >Human Resource Salary Report</h1>
+
+        <div class="blog-header">
+            <div class="container">
+                <br>
+                <main role="main" class="container">
+                    <div class="container">
+                        <table class="table table-striped table-hover">
+                            <thead class="thead-dark">
+                                <th>ID</th> <th>Name</th> <th>Job Name</th> <th>Department</th> <th>Hourly Rate</th> <th>Total Hours Worked</th> <th>Salary</th>
+                            </thead>
+                
+                            <tbody>
+                                {% for emp in empRecords%}
+                                <tr>
+                                    <td>{{emp[0]}}</td>
+                                    <td>{{emp[1]}}</td>
+                                    <td>{{emp[2]}}</td>
+                                    <td>{{emp[3]}}</td>
+                                    <td>{{'$' ~ emp[4]}}</td>
+                                    {% set count = loop.index-1 %}
+                                    <td>{{empTotalHoursList[count]}}</td>
+                                    <td>{{'$' ~ empSalaryList[count]}}</td>
+                                </tr>
+                                {% endfor %}    
+                            </tbody>
+                        </table>
+                    </div>
+                </main>
+        
+            </div>
+        </div>
+    </body>
+</html>
