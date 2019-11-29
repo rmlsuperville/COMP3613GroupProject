@@ -253,6 +253,7 @@ def employee_search_hr_report(dept):
 			empSalaryList.append(hourlyRate* float(empTotalHours[0]))
 		
 		rendered = render_template('hr_report.html', empRecords=empRecords, empTotalHoursList=empTotalHoursList, empSalaryList=empSalaryList)
+		#return rendered
 		pdf = pdfkit.from_string(rendered, False)
 		#pdf = pdfkit.from_string(rendered, False, configuration=config)
 		response = make_response(pdf)
