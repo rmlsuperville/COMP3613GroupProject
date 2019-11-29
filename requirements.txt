@@ -10,3 +10,4 @@ Werkzeug==0.16.0
 pytz==2019.3
 pdfkit==0.6.1
 python-pdf==0.37
+wkhtmltopdf==0.2
