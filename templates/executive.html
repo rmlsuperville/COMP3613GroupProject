@@ -92,7 +92,7 @@
     
     {% if empAttendance is defined %}
         <label for="searchInput">You can filter records by timestamp</label>
-        <input type="text" class="form-control" name="searchInput" id="searchInput" onkeyup="myFunction()" placeholder="Enter timestamp">
+        <input type="text" class="form-control" name="searchInput" id="searchInput" onkeyup="myFunction()" placeholder="Enter timestamp (e.g. 2019-11-0)">
         <br>
         <table class="table table-striped table-hover" id="timeRecords">
             <thead class="thead-dark">
@@ -101,7 +101,6 @@
             <tbody>
                 {% for rec in empAttendance %}
                 <tr>
-
                     <td>{{rec[0]}}</td>
                     <td>{{rec[1]}}</td>
                     <td>{{rec[2]}}</td>
@@ -134,12 +133,6 @@
             }
         }
         </script>
-
-        <br>
-
-        <form action="/employee_attendance_info/{{empId}}" method="POST">
-            <input type="submit" value="Generate PDF File" class="mail">
-        </form>
         <br>
         <form action="mailto:technical@company.com" method="post">
             <input type="submit" value="Create New Email" class="mail">

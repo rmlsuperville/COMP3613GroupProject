@@ -62,18 +62,7 @@
 
     {% if err_msg is defined %}
         <h4 style="color: red;">{{err_msg}}</h4>
-    {% endif %}
-
-    {% if dept is defined %}
-        <form action="/employee_search_hr/{{dept}}">
-            <input type="submit" value="Generate PDF File" class="mail">
-        </form>
-    {% else %}
-        <form action="/human_resource" method="POST">
-            <input type="submit" value="Generate PDF File" class="mail">
-        </form>
-    {% endif %}
-    
+    {% endif %}    
     <br>
     <form action="mailto:executive@company.com" method="post">
         <input type="submit" value="Create New Email" class="mail">
